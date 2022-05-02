@@ -127,6 +127,30 @@ class Bee(Insect):
 
 class Ant(Insect):
 	is_ant = True 
+	implemented  = False
+	food_cost = 0
+	block_path = True 
+	container = False
+
+
+	def __init__(self, armor = 1):
+		Insect.__init__(self, armor)
+
+	def can_contains(self, other):
+		return self.container and self.ant is None and not other.container
+
+
+
+
+
+
+
+
+
+
+
+
+
 		
 
 
