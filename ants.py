@@ -141,6 +141,66 @@ class Ant(Insect):
 
 
 
+class HarvestAnt(Ant):
+	name = 'Harvester'
+	implemented = True 
+	food_cost = 2
+
+	def action(self, colony):
+		colony.food += 1
+
+
+class ThrowerAnt(Ant):
+	name = 'Thrower'
+	implemented = True
+	damage = 1
+	food_cost = 3
+	min_range = 0
+	max_range = float('inf')
+
+
+	def nearest_bee(self, hive):
+		place = self.place
+		dis = 0
+
+		while place != hive:
+			bee = random_or_none(place.bee)
+			if bee is not None and self.min_range <= dis <= self.max_range:
+				return bee
+			place = place.entrance
+			dis += 1
+
+		return None
+
+
+
+	def throw_at(self, target):
+		if target is not None:
+			target.reduce_armor(self.damage)
+
+
+	def action(self, colony):
+		self.throw_at(self.nearest_bee(colony.hive))
+
+
+	def random_or_none(s):
+		if s:
+			return random.choice(s)
+
+
+
+class Water(Place):
+
+	def add_insect(self, insect):
+		Place.add_insect(self, insect):
+		if not insect.watersafe:
+			insect.reduce_armor(insect.armor)
+
+
+
+
+
+
 
 
 
