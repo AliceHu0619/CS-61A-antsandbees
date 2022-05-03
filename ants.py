@@ -624,6 +624,54 @@ class QueenPlace(Place):
 		raise beesWinException()
 
 
+	def ants_win():
+		raise AntsWinException()
+
+	def bees_win():
+		raise beesWinException()
+
+	def ant_types():
+		all_ant_types = [ ]
+		new_types = [Ant]
+
+		while new_types:
+			new_types = [t for c in new_types for t in c.__subclasses__()]
+			all_ant_types.extend(new_types)
+		return [t for t in all_ant_types if t.implemented]
+
+
+
+class GameOverException(Exception):
+	pass
+
+
+
+class AntsWinException(GameOverException):
+	pass
+
+
+class BeesWinException(GameOverException):
+	pass
+
+
+
+    def interactive_strategy(colony):
+
+    	print('colony:' + str(colony))
+    	msg = '<Control> -D (<Control> -Z <Enter> on Windows) completes a turn \n'
+    	interact(msg)
+
+
+    def start_with_strategy(args, strategy):
+
+    	import argparse
+
+    	parser = argparse.ArgumentParser(description = 'Play Ants vs SomeBees')
+    	parser.add_arguement('-d', type = str, metavar = 'Difficulty', help = 'sets difficulty of game(test/easy/medium/hard/insane)')
+    	parser.add_argument('-w', '--water', action='store_true', help='loads a full layout with water')
+    	parser.add_argument('--food', type=int, help='number of food to start with when testing', default=2)
+
+
 
 
 
