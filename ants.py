@@ -717,7 +717,52 @@ class BeesWinException(GameOverException):
 
     def dry_layout(queen, register_place, tunnels = 3, length = 9):
     	wet_layout(queen, register_place, tunnels, length, 0)
-    	
+
+
+
+
+
+class AssaultPlan(dict):
+	>>>AssaultPlan().add_wave(4,2)
+
+	def add_wave(self, bee_type, bee_armor, time, count):
+		bees = [bee_type(bee_armor) for _ in range(count)]
+		self.setdefault(time, []).extend(bees)
+		return self
+
+
+	@property
+	def all_bees(self):
+		return [bee for wave in self.values() for bee in wave]
+
+
+	def make_test_assault_plan():
+		return AssaultPlan().add_wave(Bee, 3, 2, 1).add_wave(bee, 3, 3, 1)
+
+	def make_easy_assault_plan():
+		plan = AssaultPlan()
+
+		for time in range(3, 16, 2):
+			plan.add_wave(Bee, 3, time, 1)
+
+		plan.add_wave(Wasp, 3, 4, 1)
+		plan.add_wave(NinjaBee, 3, 8, 1)
+    	plan.add_wave(Hornet, 3, 12, 1)
+    	plan.add_wave(Boss, 15, 16, 1)
+
+    	return plan 
+
+
+    def make_normal_assault_plan():
+    	plan = AssaultPlan()
+    	for time in range(3, 16, 2):
+        	plan.add_wave(Bee, 3, time, 2)
+        	
+    	plan.add_wave(Wasp, 3, 4, 1)
+    	plan.add_wave(NinjaBee, 3, 8, 1)
+    	plan.add_wave(Hornet, 3, 12, 1)
+    	plan.add_wave(Wasp, 3, 16, 1)
+
 
 
 
