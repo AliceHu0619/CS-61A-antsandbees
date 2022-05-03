@@ -373,7 +373,43 @@ class QueenAnt(ScubaThrower):
 
 
 
+class AntRemover(Ant):
+	name = 'Remover'
+	implemented = False
 
+	def __init__(self):
+		Ant.__init__(self, 0)
+
+
+
+	def make_slow(action):
+
+		def new_action(colony):
+			if colony.time % 2 == 0:
+				action(colony)
+		return new_action
+
+
+	def make_stun(action):
+		def new_action(colony):
+			pass
+
+		return new_action
+
+	def apply_effect(effect, bee, duration):
+		origin_action = bee.action
+
+		def func(colony):
+			nonlocal duration
+			if duration > 0:
+				duration -= 1
+
+				return effect(origin_action)(colony)
+
+			else:
+				return origin_action(colony)
+
+	    bee.action = func
 
 
 
