@@ -294,7 +294,43 @@ class HungryAnt(Ant):
 			bee = random.choice(self.place.bees)
 			self.eat_bee(bee)
 
-			
+
+
+class BodyguardAnt(Ant):
+	name = 'Bodyguard'
+	implemented = True 
+	container = True 
+	food_cost = 4
+
+	def __init__(self):
+		Ant.__init__(self, 2)
+		self.ant = None 
+
+
+	def container_ant(self, ant):
+		self.ant = ant 
+
+	def action(self, colony):
+		if self.ant is not None:
+			self.ant.action(colony)
+
+
+
+
+class QueenAnt(ScubaThrower):
+	name = 'Queen'
+	implemented = True 
+	food_cost = 7
+	armor = 1
+	true_queen = 1
+
+
+	def __init__(self):
+		self.double = set()
+
+
+
+
 
 
 
