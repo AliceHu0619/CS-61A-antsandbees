@@ -704,6 +704,19 @@ class BeesWinException(GameOverException):
     	return AntColony(strategy, hive, ant_types(), layout, dimensions, food).simulate()
 
 
+
+    def wet_layout(queen, register_place, tunnels = 3, length = 9, moat_frequency = 3):
+    	for tunnel in range(tunnels):
+    		exit = queen 
+    		for step in range(length):
+    			if moat_frequency != 0 and (step + 1) % moat_frequency == 0:
+    				exit = Water('water_{0}_{1}'.format(tunnels, step), exit)
+    			else:
+    				exit = 	Place('tunnel_{0}_{1}'.format(tunnel, step), exit)
+    			register_place(exit, step == length - 1)
+
+    def dry_layout(queen, register_place, tunnels = 3, length = 9):
+    	wet_layout(queen, register_place, tunnels, length, 0)
     	
 
 
