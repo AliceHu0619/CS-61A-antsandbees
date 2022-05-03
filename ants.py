@@ -327,6 +327,47 @@ class QueenAnt(ScubaThrower):
 
 	def __init__(self):
 		self.double = set()
+		self.is_true_queen = QueenAnt.true_queen > 0
+		QueenAnt.true_queen = max(0, QueenAnt.true_queen - 1)
+
+
+	def action(self, colony):
+
+		if not self.is_true_queen:
+			self.reduce_armor(self.armor)
+			return
+
+		def double(ant):
+			if ant is None:
+				return
+
+			if ant not in self.doubled:
+				ant.damage *= 2
+				self.doubled.add(ant)
+
+			if ant.container:
+				double(ant.ant)
+
+
+		place = self.place.exit
+
+		while place is not None:
+			ant = place.ant
+			double(ant)
+			place = place.exit
+
+		ScubaThrower.action(self, colony)
+
+
+
+	def reduce_armor(self, amout):
+
+		self.armor -= amount
+		
+
+
+
+
 
 
 
