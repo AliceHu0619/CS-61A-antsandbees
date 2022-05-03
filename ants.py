@@ -363,7 +363,13 @@ class QueenAnt(ScubaThrower):
 	def reduce_armor(self, amout):
 
 		self.armor -= amount
-		
+		if self.armor <= 0:
+			self.place.remove_insect(self)
+			if self.is_true_queen:
+				bees_win()
+
+
+
 
 
 
