@@ -197,6 +197,108 @@ class Water(Place):
 			insect.reduce_armor(insect.armor)
 
 
+class FireAnt(Ant):
+	
+	name = 'Fire'
+	damage = 3
+	food_cost = 5
+	implemented = True 
+
+
+	def reduce_armor(self, amout):
+
+		self.armor -= amount
+		if self.armor <= 0:
+			bees = self.place.bees[:]
+			for bee in bees:
+				bee.reduce_armor(self.damage)
+			self.place.remove_insect(self)
+
+
+
+class LongThrower(ThrowerAnt):
+	name = 'Long'
+	implemented = True
+	min_range = 5
+	max_range = float('inf')
+	food_cost = 2
+
+
+class ShortThrower(ThrowerAnt):
+	name = 'Short'
+	implemented = True 
+	min_range = 0
+	max_range = 3
+	food_cost = 2
+
+
+class WallAnt(Ant):
+	name = 'Wall'
+	implemented = True 
+	food_cost = 4
+	armor = 4
+
+	def __init__(self):
+		super().__init__(self.armor)
+
+
+
+class NinjaAnt(Ant):
+	name = 'Ninja'
+	damage = 1
+	implemented = True 
+	block_path = False
+	food_cost = 5
+	armor = 1
+
+
+	def action(self, colony):
+		bees = self.place.bees[:]
+		for bee in bees:
+			bee.reduce_armor(self.damage)
+
+
+
+class ScubaThrower(ThrowerAnt):
+	name = 'Scuba'
+	armor = 1
+	food_cost = 6
+	watersafe = True
+
+
+
+
+class HungryAnt(Ant):
+	name = 'Hungry'
+	implemented = True 
+	time_to_digest = 3
+	food_cost = 4
+	armor = 1
+
+
+	def __init__(self):
+		self.digesting = 0
+
+	def eat_bee(self, bee):
+		bee.armor = 0
+		bee.place.remove_insect(bee)
+		self.digesting = self.time_to_digest
+
+
+	def action(self, colony):
+		if self.digesting > 0:
+			self.digesting -= 1
+			return 
+
+		if len(self.place.bees) > 0:
+			bee = random.choice(self.place.bees)
+			self.eat_bee(bee)
+
+			
+
+
+
+
 
 
 
