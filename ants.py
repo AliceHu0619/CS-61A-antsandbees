@@ -670,6 +670,41 @@ class BeesWinException(GameOverException):
     	parser.add_arguement('-d', type = str, metavar = 'Difficulty', help = 'sets difficulty of game(test/easy/medium/hard/insane)')
     	parser.add_argument('-w', '--water', action='store_true', help='loads a full layout with water')
     	parser.add_argument('--food', type=int, help='number of food to start with when testing', default=2)
+    	args = parser.parse_args()
+
+
+    	assault_plan = make_normal_assault_plan()
+    	layout = dry_layout
+    	tunnel_length = 9
+    	num_tunnels = 3
+    	food = args.food
+
+    	if args.water:
+    		layout = wet_layout
+
+    	if args.d in ['t', 'test']:
+    		assault_plan = make_normal_assault_plan()
+    		num_tunnels = 1
+    	elif args.d in ['e', 'easy']:
+    		assault_plan = make_easy_assault_plan()
+    		num_tunnels = 2
+    	elif args in ['n', 'normal']:
+    		assault_plan = make_normal_assault_plan()
+    		num_tunnels = 3
+    	elif args.d in ['h', 'hard']:
+    		assault_plan = make_hard_assault_plan()
+    		num_tunnels = 4
+    	elif args.d in ['i', 'insane']:
+    		assault_plan = make_insane_assault_plan()
+    		num_tunnels = 4
+
+    	hive = Hive(assault_plan)
+    	dimensions = (num_tunnels, tunnel_length)
+
+    	return AntColony(strategy, hive, ant_types(), layout, dimensions, food).simulate()
+
+
+    	
 
 
 
