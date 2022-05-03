@@ -414,6 +414,123 @@ class AntRemover(Ant):
 
 
 
+class SlowThrower(ThrowerAnt):
+
+	name = 'Slow'
+	implemented = True
+	food_cost = 4
+	armor = 1
+
+
+	def throw_at(self, target):
+		if target:
+			apply_effect(make_slow, target, 3)
+
+
+
+
+class StunThrower(ThrowerAnt):
+
+	name = 'Stun'
+	implemented = True
+	food_cost = 6
+	armor = 1
+
+
+	def throw_at(self, target):
+		if target:
+			apply_effect(make_stun, target, 1)
+
+
+
+
+
+class Wasp(Bee):
+
+	name = 'Wasp'
+	damage = 2
+
+
+
+
+class Hornet(Bee):
+	name = 'Hornet'
+	damage = 0.25
+
+
+	def action(self, colony):
+		for i in range(2):
+			if self.armor > 0:
+				super().action(colony)
+
+
+	def __setattr__(self, name, value):
+		if name != 'action':
+			object.__setattr__(self, name, value)
+
+
+
+
+class NinjaBee(Bee):
+
+	name = 'NinjaBee'
+
+	def blocked(self):
+		return False
+
+
+class Boss(Wasp, Hornet):
+
+	name = 'Boss'
+	damage_cap = 8
+	action = Wasp.action
+
+
+	def reduce_armor(self, amount):
+		super().reduce_armor(self.damage_modifier(amount))
+
+	def damage_modifier(self, amount):
+		return amount * self.damage_cap/ (self.damage_cap + amount)
+
+
+class Hive(Place):
+
+
+	def __init__(self, assault_plan):
+		self.name = 'Hive'
+		self.assault_plan = assault_plan
+		self.bees = []
+
+		for bee in assault_plan.all_bees:
+			self.add_insect(bee)
+
+		self.entrance = None 
+		self.ant = None 
+		self.exit = None 
+
+
+	def strategy(self, colony):
+		exits = [p for p in colony.places.values() if p.entrance is self]
+		for bee in self.assault_plan.get(colony.time, []):
+			bee.move_to(random.choice(exits))
+			colony.active_bees.append(bee)
+
+
+
+
+class AntColony(object):
+
+
+	def __init__(self, strategy, hive, ant_types, create_places, dimensions, food = 2 ):
+		
+
+
+
+
+
+
+
+
 
 
 
