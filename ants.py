@@ -522,7 +522,114 @@ class AntColony(object):
 
 
 	def __init__(self, strategy, hive, ant_types, create_places, dimensions, food = 2 ):
-		
+		self.time = 0
+		self.food = food
+		self.strategy = strategy
+		self.hive = hive
+		self.ant_types = OrderedDict((a.name, a) for a in ant_types)
+		self.dimensions = dimensions
+		self.active_bees = []
+		self.configure(hive, create_places)
+
+
+	def configure(self, hive, create_places):
+		self.queen = QueenPlace('AntQueen')
+		self.places = OrderedDict()
+		self.bee_entrances = [ ]
+
+		def register_place(place, is_bee_entrance):
+			self.places[place.name] = place
+
+			if is_bee_entrance:
+				place.entrance = hive
+				self.bee_entrances.append(place)
+
+		register_place(self.hive, False)
+		create_places(self.queen, register_place, self.dimensions[0], self.dimensions[1])
+
+
+
+	def simulate(self):
+		num_bees = len(self.bees)
+
+		try:
+			while True:
+				self.hive.strategy(self)
+				self.strategy(self)
+
+				for ant in self.ants:
+					if ant.armor > 0:
+						ant.action(self)
+
+				for bee in self.active_bees[:]:
+					if bee.armor > 0:
+						bee.action(self)
+					if bee.armor <= 0:
+						num_bees -= 1
+						self.active_bees.remove(bee)
+
+				if num_bees == 0:
+					raise AntsWinException()
+				self.time += 1
+
+			except AntsWinException:
+				print('All bees are vanquished. You win')
+				return True 
+
+			except beesWinException:
+				print('The ant queen has perished. Please try again')
+				return False
+
+
+	def deploy_ant(self, place_name, ant_types_name):
+
+		constructor = self.ant_types[ant_types_name]
+
+		if self.food < constructor.food_cost:
+			print('Not enough food remains to place' + ant_types_name)
+		else:
+			ant = constructor()
+			self.places[place_name].add_insect(ant)
+			self.food -= constructor.food_cost
+			return ant 
+
+	def remove_ant(self, place_name):
+		place = self.place_name[place_name]
+		if place.ant is not None:
+			place.remove_insect(place.ant)
+
+
+	@property
+	def ants(self):
+		return [p.ant for p in self.places.values() if p.ant is not None]
+
+	@property
+	def bees(self):
+		return [b for p in self.places.values() for b in p.bees]
+
+	@property
+	def insects(self):
+		return self.ants + self.bees
+	
+	def __str__(self):
+		status = '(Food;{0}, Time: {1})'.format(self.food, self.time)
+		return str([str(i) for i in self.ants + self.bees]) + status
+
+
+
+class QueenPlace(Place):
+
+	def add_insect(self, insect):
+		assert not insect.is_ant, 'can not add{0} to QueenPlace'
+		raise beesWinException()
+
+
+
+
+
+
+
+
 
 
 
