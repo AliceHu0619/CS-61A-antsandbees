@@ -83,7 +83,66 @@ class AntsGUI:
         star_text = self.canvas.draw_text('click to start', MESSAGE_POS)
         self.canvas.wait_for_click()
         self.canvas.clear(star_text)
-        
+
+
+    def _init_control_panel(self, colony):
+        self.ant_type_selected = None
+        self.ant_type_frame = []
+        panel_pos = PANEL_POS
+
+        for name, ant_type in colony.ant_type.items():
+            width = ANT_IMAGE_WIDTH + 2 * PANEL_PADDING[0]
+            height = ANT_IMAGE_HEIGHT + 6 + 2 * PANEL_PADDING[1]
+
+            def on_click(colony, frame, name = name):
+                self.ant_type_frame = name 
+                self._update_control_panel(colony)
+
+
+            frame = self.add_click_rect(panel_pos, width, height, on_click)
+            self.ant_type_frame.append((name, frame))
+            img_pos = shift_points(panel_pos, PANEL_PADDING)
+            self.canvas.draw_image(img_pos, INSECT_FILES[name])
+            cost_pos = shift_points(panel_pos, (width/2, ANT_IMAGE_HEIGHT + 4 + PANEL_PADDING[1]))
+            food_str = str(ant_type.food_cost)
+            self.canvas.draw_image(food_str, cost_pos, anchor = "center")
+            panel_pos = shift_points(panel_pos, (width + 2, 0))
+
+
+    def _init_places(self, colony):
+
+        self.place_points = dict()
+        self.image = {'AntQueen': dict()}
+        place_pos = PANEL_POS
+        width = BEE_IMAGE_WIDTH + 2 * PANEL_PADDING[0]
+        height = ANT_IMAGE_HEIGHT + 2* PANEL_PADDING[1]
+        rows = 0
+
+        for name, place in colony.places.items():
+            if place.name == 'Hive':
+                continue
+            if place.exit.name == 'AntQueen':
+                row_offset = (0, rows *(height + PLACE_MARGIN))
+                place_pos = shift_points(PLACE_POS, row_offset)
+                rows += 1
+
+            def on_click(colony, frame, name = name):
+                ant_type = self.ant_type_selected
+                existing_ant = colony.places[name].ant
+
+                if ant_type is 'Remover':
+                    if existing_ant is not None:
+                        print('colony.remove_ant('{0}')'.format(name))
+                        colony.remove_ant(name)
+                        self._update_places(colony)
+                elif ant_type is not None:
+                    try:
+                        print('colony.deploy_ant('{0}','{1}')')
+
+
+
+
+
 
 
 
