@@ -137,7 +137,30 @@ class AntsGUI:
                         self._update_places(colony)
                 elif ant_type is not None:
                     try:
-                        print('colony.deploy_ant('{0}','{1}')')
+                        print('colony.deploy_ant('{0}','{1}')'.format(name, ant_type))
+
+                        colony.deploy_ant(name, ant_type)
+                        self._update_places(colony)
+                    except Exception as e:
+                        print(e)
+
+
+            color = 'blue' if place.name.startswith('water') else 'white'
+
+            frame = self.add_click_rect(panel_pos, width, height, on_click,color = color)
+            self.canvas.draw_image(place_pos, TUNNEL_FILE)
+            self.place_points[name] = place_pos
+            self.images[name] = dict()
+            place_pos = shift_points(place_pos, (width + PLACE_MARGIN, 0))
+
+        self.images[colony.hive.name] = dict()
+        self.place_points[colony.hive.name] = (place_pos[0] + width, HIVE_HEIGHT)
+
+        self.laser_end = (BEE_IMAGE_WIDTH + 2 * PLACE_PADDING[0]) * len(colony.places)
+
+        for bee in colony.hive.bees:
+            self._draw_insect(bee, colony.hive.name, True)
+
 
 
 
