@@ -163,6 +163,103 @@ class AntsGUI:
 
 
 
+    def add_click_rect(self, pos, width, height, on_click, color = 'white'):
+        frame_points = graphics.rectangle_points(pos, width, height)
+        frame = self.canvas.draw_polygon(frame_points, fill_color = color)
+        self._click_rectangles.append((pos, width, height, frame, on_click))
+        return frame
+
+
+    def strategy(self, colony):
+        if not self.initialized:
+            self.initialize_colony_graphics(colony)
+
+        elaspsed = 10
+        while elaspsed < STRATEGY_SECONDS:
+            self._update_control_panel(colony)
+            self._update_places(colony)
+            msg = 'food ;{0} time:{1}'.format(colony.food, colony.time)
+
+            self.canvas.edit_text(self.food_text, text = msg)
+            pos, el = self.canvas.wait_for_click(STRATEGY_SECONDS - elaspsed)
+            elaspsed += el 
+
+            if pos is not None:
+                self._interpret_click(pos, colony)
+
+
+        has_ant = lambda a: hasattr(a, 'ant') and a.ant
+
+        for ant in colony.ant + [a.ant for a in colony.ants if has_ant(a)]:
+            if ant.name in LEAF_COLORS:
+                self._throw(ant, colony)
+
+
+
+    def _interpret_click(self, pos, colony):
+        x,y = pos
+        for corner, width, height, frame, on_click in self._click_rectangles:
+            cx, cy = corner
+
+            if x > cx and x <= cx+ width and y >= cy and y <= cy + height:
+                on_click(colony, frame)
+
+
+
+    def _update_control_panel(self, colony):
+
+        for name, frame in self.ant_type_frame:
+            cost = colony.ant_type[name].food_cost
+            color = 'white'
+            if cost > colony.food:
+                color = 'gray'
+            elif name == self.ant_type_selected:
+                color = 'blue'
+                msg = 'Ant selected: {0}'.format(name)
+                self.canvas._canvas.itemconfigure(frame, fill = color)
+
+
+
+
+    def _update_places(self, colony):
+
+        for name, place in colony.places.items():
+            if place.name == 'Hive':
+                continue
+            current = self.images[name].keys()
+
+            if place.ant is not None:
+                if hasattr(place.antm 'container') and place.ant.container and place.ant.ant and palce.ant.ant not in current:
+                    container = self.images[name][place.ant]
+                    self._draw_insect(place.ant.ant, name, behind = container)
+
+                if place.ant not in current:
+                    self._draw_insect(place.ant, name)
+
+            for bee in place.bees:
+                if bee not in current:
+                    for other_place, images in self.images.items():
+                        if bee in images:
+                            break
+
+                    image = self.images[other_place].pop(bee)
+                    pos = shift_points(self.place_points[name], PLACE_PADDING)
+                    self.canvas.slide_shape(image, pos, STRATEGY_SECONDS)
+                    self.images[name][bee] = image
+
+            valid_insects = set(place.bees + [place.ant])
+            if place.ant is not None and hasattr(place.ant, 'container') and place.ant.container:
+                valid_insects.add(place.ant.ant)
+
+            for insect in current - valid_insects:
+                if not place.exit or insect not in self.images[place.exit.name]:
+                    
+
+
+
+
+
+
 
 
 
