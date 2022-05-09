@@ -277,7 +277,40 @@ class AntsGUI:
             start = shift_points(self.place_points[ant.place.name], LEAF_START_OFFSET)
             end = shift_points(self.place_points[bee.place.name], LEAF_END_OFFSET)
             animate_leaf(self.canvas, start, end, color= LEAF_COLORS[ant.name])
-            
+
+
+
+def leaf_coords(pos, angle, length):
+    angles = [angle - pi, angle - pi/2, angle, angle + pi /2]
+    distance = [length / 3, length /2, length. length/2]
+    return [graphics.rectangle_points(pos, a, d) for a,d in zip(angles, distances)]
+
+
+
+def animate_leaf(canvas, start, length, duration = 0.6, color = 'cyan'):
+    laser = canvas.draw_line(start, (length, start[1]), color, width = 3)
+    canvas._canvas.after(int(1000 * duration) + 1, lambda: canvas.clear(laser))
+
+
+
+def animate_leaf(canvas, start, end, duration = 0.3, color = 'ForestGreen'):
+    length = 40
+    leaf = canvas.draw_polygon(leaf_coords(start, 0 , length), color = 'DarkGreen', fill_color = color, smooth = 1)
+
+    num_frames = duration/ graphics.FRAME_TIME
+    increment = tuple([(e-s)/num_frames for s, e in zip(start, end)])
+
+    def point_fn(frame_count):
+        nonlocal start
+        angle = pi/8 * frame_count
+        cs = leaf_coords(start, angle, length)
+        start = shift_points(start, increment)
+        return cs 
+    canvas.animate_shape(leaf, duration, point_fn)
+    canvas._canvas.after(int(1000*duration) + 1, lambda: canvas.clear(leaf))
+
+
+    
 
 
 
