@@ -253,7 +253,32 @@ class AntsGUI:
 
             for insect in current - valid_insects:
                 if not place.exit or insect not in self.images[place.exit.name]:
-                    
+                    image = self.images[name].pop(insect)
+                    pos = (self.place_points[name][0], CRYPT)
+                    self.canvas.slide_shape(image, pos, STRATEGY_SECONDS)
+
+
+    def _draw_insect(self, insect, place_name, random_offset = False, behind = 0):
+
+        image_file = INSECT_FILES[insect.name]
+        pos = shift_points(self.place_points[place_name], PLACE_PADDING)
+        if random_offset:
+            pos = shift_points(pos, (random.randin(-10, 10), random.randint(-50, 50)))
+            if random_offset:
+                pos = shift_points(pos, (random.randin(-10, 10), random.randint(-50, 50)))
+            image = self.canvas.draw_image(pos, image_file, behind = behind)
+            self.images[place_name][insect] = image
+
+
+
+    def _throw(self, ant, colony):
+        bee = ant.nearest_bee(colony.hive)
+        if bee:
+            start = shift_points(self.place_points[ant.place.name], LEAF_START_OFFSET)
+            end = shift_points(self.place_points[bee.place.name], LEAF_END_OFFSET)
+            animate_leaf(self.canvas, start, end, color= LEAF_COLORS[ant.name])
+            
+
 
 
 
