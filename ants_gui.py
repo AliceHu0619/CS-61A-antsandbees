@@ -310,7 +310,14 @@ def animate_leaf(canvas, start, end, duration = 0.3, color = 'ForestGreen'):
     canvas._canvas.after(int(1000*duration) + 1, lambda: canvas.clear(leaf))
 
 
-    
+
+from utils import *
+@main 
+
+def run(*args):
+    ants.Insect.reduce_armor = class_method_wrapper(ants.Insect.reduce_armor, pre = print_expired_insects)
+
+    ants.start_with_strategy(args, AntsGUI().strategy)
 
 
 
