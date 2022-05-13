@@ -239,6 +239,41 @@ class GUI:
 
 
 
+	def deployAnt(self, data):
+
+		pname, ant = data['name'],data['ant']
+		if ant == "remover":
+			existing_ant = self.colony.places[pname].ant 
+			if existing_ant is not None:
+				print('colony.remove_ant("{0}")'.format(pname))
+
+				self.colony.remove_ant(pname)
+
+			return
+		insect = None
+
+		try:
+			print('colony.deploy_ant('{0}','{1}')'.format(pname, ant))
+
+			insect = self.colony.deploy_ant(pname, ant)
+
+		except Exception as e:
+			print(e)
+			return {"error": str(e)}
+
+		if not insects:
+			return {"error": "unable to deploy ant"}
+
+
+		id = self.currentInsectId
+		self.insects.append(id)
+		self.insectToId[insects] = id 
+		self.currentInsectId += 1
+		self._update_control_panel(self.colony)
+		return {"success": 1, "id":id}
+
+
+
 
 
 
