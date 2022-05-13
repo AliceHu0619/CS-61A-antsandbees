@@ -162,6 +162,63 @@ class Canvas(object):
 
 
 
+	def wait_for_click(self, seconds = 0):
+
+		elapsed = 0
+
+		while elapsed < seconds or seconds == 0:
+			if self._click_pos is not None:
+				pos = self._click_pos
+				self._click_pos = None
+
+				return pos, elapsed
+			self._sleep(FRAME_TIME)
+
+			elapsed += FRAME_TIME
+		return None, elapsed
+
+
+
+	def _draw_background(self):
+		w, h = self.width - 1, self.height -1
+		corners = [(0, 0), (0, h), (w, h), (w,0)]
+		self.draw_polygon(corners, self.color, fill_color = self.color, fill = True, smooth = False)
+
+
+	def _click(self, event):
+		self._click_pos = (event.x, event.y)
+
+
+	def _sleep(self, seconds):
+		self._tk.update_idletasks()
+		self._tk.after(int(1000 * seconds), self._tk.quit)
+		self._tk.mainloop()
+
+
+
+	def flatterned(points):
+		coords = list()
+		[coords.extend(p) for p in points]
+		return tuple(coords)
+
+
+	def paired(coords):
+		assert len(coords) % 2 == 0, 'coordinates are not paired'
+		points = []
+		x = None
+
+		for elem in coords:
+			if x is None:
+				x = elem
+			else:
+				points.append((x, elem))
+				x = None
+		return points
+
+
+
+
+
 
 
 
