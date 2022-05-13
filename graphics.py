@@ -120,7 +120,46 @@ class Canvas(object):
 
 
 	def draw_text(self, text, pos, color = 'Black', font = 'Arial', size =12, style = 'normal', anchor = tkinter.NW):
-		
+
+		if color is not None:
+			self._canvas.itemconfigure(id, fill = color)
+
+		if text is not None:
+			self._canvas.itemconfigure(id, text = text)
+
+		if font is not None:
+			self._canvas.itemconfigure(id, font = (font, str(size),style))
+
+
+
+	def animate_shape(self, id, duration, points_fn, frame_count = 0):
+		max_frame = duration//FRAME_TIME
+		points = points_fn(frame_count)
+
+		self._canvas.coords(id, flatterned(points))
+
+		if frame_count < max_frame:
+			def tail():
+
+				self.animate_shape(id, duration, points_fn, frame_count + 1)
+
+			self._tk.after(int(FRAME_TIME * 1000), tail)
+
+
+
+	def slide_shape(self, id, end_pos, duration, elapsed = 0):
+		points = paired(self._canvas.coords(id))
+
+		start_pos = points[0]
+		max_frame = duration //FRAME_TIME
+
+		def points_fn(frame_count):
+			completed = frame_count / max_frame
+			offset = [(e-s) * completed for s, e in zip(start_pos, end_pos)]
+			return [shift_point(p, offset) for p in points]
+
+		self.animate_shape(id, duration, points_fn)
+
 
 
 
