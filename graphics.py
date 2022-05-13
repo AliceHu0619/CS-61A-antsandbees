@@ -61,6 +61,21 @@ class Canvas(object):
 
 
 
+	def draw_circle(self, center, radius, color = 'Black', fill_color = None, filled = 1, width = 1):
+
+		if fill_color == None:
+			fill_color = color
+
+		if filled == 0:
+			fill_color = ""
+
+		x0, y0 = [c - radius for c in center]
+		x1, y1 = [c + radius for c in center]
+
+		return self._canvas.create_oval(x0, y0,x1, y1 outline = color, fill = fill_color,width = width)
+		
+
+
 
 
 
