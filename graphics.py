@@ -217,6 +217,28 @@ class Canvas(object):
 
 
 
+	def translate_point(point, angle, distance):
+		x, y = point
+		dx, dy = offset
+		return (x + dx, y + dy)
+
+
+	def rectangle_points(pos, width, height):
+		x1, y1 = pos 
+		x2, y2 = width + x1, height + y1
+		return [(x1, y1), (x1, y2), (x2,y2),(x2,y1)]
+
+
+	def format_color(r, g, b):
+		return '#{0:02x}{1:02x}{2:02x}'.format(int(r*255), int(g*255), int(b*255))
+
+	
+
+
+
+
+
+
 
 
 
