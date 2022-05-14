@@ -320,7 +320,18 @@ class HttpHandler(http.server.SimpleHTTPRequestHandler):
 
 
 
-	
+
+	def dead_insects(self, rv, *args):
+
+		if self.armor <= 0 and self:
+			print('{0} ran out of armor and expired'.format(self))
+			if self in gui.insectToId:
+				gui.deadinsects.append(gui.insectToId[self])
+				gui.saveState('deadinsects', gui.deadinsects)
+
+			elif self in gui.beeToId:
+				gui.deadbees.append(gui.beeToId[self])
+				
 
 
 
