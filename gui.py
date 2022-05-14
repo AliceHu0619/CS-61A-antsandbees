@@ -274,6 +274,54 @@ class GUI:
 
 
 
+import http.server
+import cgi 
+
+class HttpHandler(http.server.SimpleHTTPRequestHandler):
+
+	def log_message(self, format, *args):
+		return
+
+
+	def cgiFieldStorageToDict(self, fieldStorage):
+
+		params = {}
+		for key in fieldStorage.keys():
+			params[key] = fieldStorage[key].value
+		return params
+
+
+	def do_POST(self):
+		path = self.path
+		action = {
+				'/ajax/fetch/state': gui.getState,
+                '/ajax/start/game': gui.startGame,
+                '/ajax/exit': gui.exit,
+                '/ajax/deploy/ant': gui.deployAnt,
+
+		}.get(path)
+
+
+		if not action:
+			return
+
+		form = cgi.FieldStorage(fp = self.rfile, headers = self.headers, environ = {'REQUEST_METHOD':'POST', 'CONTENT_TYPE':self.headers['Content-Type']})
+
+		data = self.cgiFieldStorageToDict(form)
+
+		response = action(data)
+		self.send_response(200)
+
+		if response:
+			self.send_header('Content-Type','application/json')
+			self.end_headers()
+			response = json.dumps(response)
+			self.wfile.write(response.encode('ascii'))
+
+
+
+	
+
 
 
 
