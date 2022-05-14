@@ -331,7 +331,10 @@ class HttpHandler(http.server.SimpleHTTPRequestHandler):
 
 			elif self in gui.beeToId:
 				gui.deadbees.append(gui.beeToId[self])
-				
+				gui.saveState('deadbees', gui.deadbees)
+
+
+	
 
 
 
