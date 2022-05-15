@@ -359,6 +359,32 @@ class HttpHandler(http.server.SimpleHTTPRequestHandler):
 
 		except urllib.request.URLError as e:
 			print('unable to check for updates')
+
+		if data:
+			release_version = float(data['name'])
+			print('local version of', VERSION, "is behind remote version of", release_version)
+			get_update(data['zipball_url'], data["name"])
+		else:
+			print('local version of', VERSION, "is current with or ahead of remote version of", release_version)
+
+
+	def get_update(url, version):
+		request = urllib.request.Request(url)
+		data = None
+		print('Downloading new version....')
+		try:
+
+			response = urllib.request.urlopen(request)
+			with open(version + '.zip', 'wb') as f:
+				f.write(response.read())
+			f = zipfile.ZipFile(version + ".zip")
+			f.extractall(version)
+
+			os.remove(version + ".zip")
+			os.chdir(version)
+			os.chdir(os.listdir()[0])
+			files = os.listdir()
+			dirs = []
 			
 
 
