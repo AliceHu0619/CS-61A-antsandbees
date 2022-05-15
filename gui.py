@@ -385,7 +385,16 @@ class HttpHandler(http.server.SimpleHTTPRequestHandler):
 			os.chdir(os.listdir()[0])
 			files = os.listdir()
 			dirs = []
-			
+
+			for f in files:
+
+				if f[0] == '.' or f[-3] == ".md":
+					continue
+				if os.path.isdir(f):
+					dirs.append(f)
+					continue
+				shutil.copy(f, "../../" + f)
+				
 
 
 
