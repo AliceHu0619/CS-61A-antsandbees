@@ -334,8 +334,32 @@ class HttpHandler(http.server.SimpleHTTPRequestHandler):
 				gui.saveState('deadbees', gui.deadbees)
 
 
-	
 
+
+	def remove_ant(self, rv, *args):
+		r = gui.get_place_row(args[0])
+		c = gui.get_place_column(args[0])
+
+		if c in gui.places[r]:
+			if "id" in gui.places[r][c]["insects"]:
+				gui.deadinsects.append(gui.places[r][c]["insects"]["id"])
+				gui.saveState("deadinsects", gui.deadinsects)
+
+
+
+	def update():
+		request = urllib.request.Request("http://api.github.com/repos/colinschoen/Ants-Web-Viewer/release/latest")
+		data = None
+
+		print("checking for updates....")
+
+		try:
+			response = urllib.request.urlopen(request)
+			data = json.loads(response.read().decode('utf-8'))
+
+		except urllib.request.URLError as e:
+			print('unable to check for updates')
+			
 
 
 
