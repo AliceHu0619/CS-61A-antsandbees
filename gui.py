@@ -394,7 +394,61 @@ class HttpHandler(http.server.SimpleHTTPRequestHandler):
 					dirs.append(f)
 					continue
 				shutil.copy(f, "../../" + f)
-				
+
+			for d in dirs:
+				distutils.dir_util.copy_tree(d, "../../" + d)
+
+			os.chdir('../..')
+			print('cleaning up...')
+
+			shutil.rmtree(version)
+			print('update complete')
+
+		except Exception as e:
+			print('Error:', e)
+
+
+
+
+import socketserver, socket
+
+class CustomThreadingTCPServer(socketserver.ThreadingTCPServer):
+	def server_bind(self):
+		self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+		self.socket.bind(self.server_address)
+
+
+@main 
+
+def run(*args):
+	import socketserver
+	import webbrowser
+
+	PORT  = 8000
+
+	global gui
+	gui = GUI()
+	gui.args = args
+
+	httpd = CustomThreadingTCPServer(('', PORT),HttpHandler)
+	print('web server started a@localhost' + str(port))
+	def start_http():
+		while gui.active:
+			httpd.handle_request()
+		print('web server terminated')
+	threading.Thread(target = start_http).start()
+
+	try:
+		webbrowser.open("http://localhost:" + str(PORT) + '/gui.html', 2)
+
+	except Exception:
+		print('unable to automatically open web browser.')
+		print('point your browser to http://localhost:' + str(PORT)+'/gui.html')
+
+
+
+
+
 
 
 
